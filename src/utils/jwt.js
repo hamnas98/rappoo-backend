@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken');
 const env = require('../config/env');
 
 const generateToken = (userId) => {
-  const secret = env.jwtSecret;  // Changed from JWT_SECRET to jwtSecret
-  const expire = env.jwtExpire;  // Changed from JWT_EXPIRE to jwtExpire
+  const secret = env.jwtSecret;  
+  const expire = env.jwtExpire;  
 
   if (!secret) {
     throw new Error('JWT_SECRET is not defined in environment variables');
@@ -18,7 +18,7 @@ const generateToken = (userId) => {
 
 const verifyToken = (token) => {
   try {
-    const secret = env.jwtSecret;  // Changed from JWT_SECRET to jwtSecret
+    const secret = env.jwtSecret;  
     
     if (!secret) {
       throw new Error('JWT_SECRET is not defined');
