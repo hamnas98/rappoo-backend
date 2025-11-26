@@ -1,94 +1,137 @@
-const faqService = require('../services/faqService');
+const FAQ = require('../models/FAQ');
 const logger = require('../utils/logger');
 
-class FAQController {
-  async getAllFAQs(req, res, next) {
-    try {
-      const faqs = await faqService.getAllFAQs();
-
-      res.status(200).json({
-        success: true,
-        count: faqs.length,
-        data: faqs
-      });
-    } catch (error) {
-      logger.error('Get FAQs error:', error);
-      next(error);
+// Get All FAQs
+const getAllFAQs = async (req, res, next) => {
+  try {
+    const faqs = await FAQ.find({ isActive: true }).sort({ order: 1, createdAt: -1 });
+    if(!faqs) {
+      logger.warn('no faqs data')
     }
+
+    console.log('faqs data:', faqs);
+
+    res.status(200).json({
+      success: true,
+      count: faqs.length,
+      data: faqs
+    });
+  } catch (error) {
+    logger.error('Get FAQs error:', error);
+    next(error);
   }
+};
 
-  async getFAQById(req, res, next) {
-    try {
-      const faq = await faqService.getFAQById(req.params.id);
+// Get FAQ By ID
+const getFAQById = async (req, res, next) => {
+  try {
+    const faq = await FAQ.findById(req.params.id);
 
-      res.status(200).json({
-        success: true,
-        data: faq
-      });
-    } catch (error) {
-      logger.error('Get FAQ error:', error);
-      res.status(404).json({
+    if (!faq) {
+      return res.status(404).json({
         success: false,
-        message: error.message
+        message: 'FAQ not found'
       });
+      logger.info('No Fa1 Data');
     }
+
+    res.status(200).json({
+      success: true,
+      data: faq
+    });
+  } catch (error) {
+    logger.error('Get FAQ error:', error);
+    res.status(404).json({
+      success: false,
+      message: 'FAQ not found'
+    });
   }
+};
 
-  async createFAQ(req, res, next) {
-    try {
-      const faq = await faqService.createFAQ(req.body);
+// Create FAQ
+const createFAQ = async (req, res, next) => {
+  try {
+    const faq = await FAQ.create(req.body);
 
-      logger.success('FAQ created');
+    logger.success('FAQ created');
 
-      res.status(201).json({
-        success: true,
-        message: 'FAQ created successfully',
-        data: faq
-      });
-    } catch (error) {
-      logger.error('Create FAQ error:', error);
-      next(error);
-    }
+    res.status(201).json({
+      success: true,
+      message: 'FAQ created successfully',
+      data: faq
+    });
+  } catch (error) {
+    logger.error('Create FAQ error:', error);
+    next(error);
   }
+};
 
-  async updateFAQ(req, res, next) {
-    try {
-      const faq = await faqService.updateFAQ(req.params.id, req.body);
+// Update FAQ
+const updateFAQ = async (req, res, next) => {
+  try {
+    const faq = await FAQ.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true
+      }
+    );
 
-      logger.success('FAQ updated');
-
-      res.status(200).json({
-        success: true,
-        message: 'FAQ updated successfully',
-        data: faq
-      });
-    } catch (error) {
-      logger.error('Update FAQ error:', error);
-      res.status(404).json({
+    if (!faq) {
+      return res.status(404).json({
         success: false,
-        message: error.message
+        message: 'FAQ not found'
       });
     }
+
+    logger.success('FAQ updated');
+
+    res.status(200).json({
+      success: true,
+      message: 'FAQ updated successfully',
+      data: faq
+    });
+  } catch (error) {
+    logger.error('Update FAQ error:', error);
+    res.status(404).json({
+      success: false,
+      message: error.message
+    });
   }
+};
 
-  async deleteFAQ(req, res, next) {
-    try {
-      await faqService.deleteFAQ(req.params.id);
+// Delete FAQ
+const deleteFAQ = async (req, res, next) => {
+  try {
+    const faq = await FAQ.findByIdAndDelete(req.params.id);
 
-      logger.success('FAQ deleted');
-
-      res.status(200).json({
-        success: true,
-        message: 'FAQ deleted successfully'
-      });
-    } catch (error) {
-      logger.error('Delete FAQ error:', error);
-      res.status(404).json({
+    if (!faq) {
+      return res.status(404).json({
         success: false,
-        message: error.message
+        message: 'FAQ not found'
       });
     }
-  }
-}
 
-module.exports = new FAQController();
+    logger.success('FAQ deleted');
+
+    res.status(200).json({
+      success: true,
+      message: 'FAQ deleted successfully'
+    });
+  } catch (error) {
+    logger.error('Delete FAQ error:', error);
+    res.status(404).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+module.exports = {
+  getAllFAQs,
+  getFAQById,
+  createFAQ,
+  updateFAQ,
+  deleteFAQ
+};

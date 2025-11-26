@@ -1,13 +1,12 @@
 const express = require('express');
-const heroController = require('../controllers/heroController');
+const router = express.Router();
+const { getAbout, updateAbout } = require('../controllers/aboutController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-const router = express.Router();
+// Public route
+router.get('/', getAbout);
 
-// GET /api/content/hero (public)
-router.get('/', heroController.getHero);
-
-// PUT /api/content/hero (protected)
-router.put('/', authMiddleware, heroController.updateHero);
+// Protected route
+router.put('/', authMiddleware, updateAbout);
 
 module.exports = router;

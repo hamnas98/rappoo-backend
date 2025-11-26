@@ -1,37 +1,61 @@
-const aboutService = require('../services/aboutService');
+const About = require('../models/About');
 const logger = require('../utils/logger');
 
-class AboutController {
-  async getAbout(req, res, next) {
-    try {
-      const about = await aboutService.getAbout();
-
-      res.status(200).json({
-        success: true,
-        data: about
-      });
-    } catch (error) {
-      logger.error('Get about error:', error);
-      next(error);
+// Get About
+const getAbout = async (req, res, next) => {
+  try {
+    let about = await About.findOne();
+    
+    // If no about exists, create one with default values
+    if (!about) {
+     
+      logger.info('No About Data');
     }
+
+    console.log('about data:', about);
+
+    res.status(200).json({
+      success: true,
+      data: about
+    });
+  } catch (error) {
+    logger.error('Get about error:', error);
+    next(error);
   }
+};
 
-  async updateAbout(req, res, next) {
-    try {
-      const about = await aboutService.updateAbout(req.body);
+// Update About
+const updateAbout = async (req, res, next) => {
+  try {
+    const { title, subtitle, description } = req.body;
 
-      logger.success('About section updated');
+    let about = await About.findOne();
 
-      res.status(200).json({
-        success: true,
-        message: 'About section updated successfully',
-        data: about
-      });
-    } catch (error) {
-      logger.error('Update about error:', error);
-      next(error);
+    if (!about) {
+      // Create new if doesn't exist
+      about = await About.create(req.body);
+    } else {
+      // Update existing
+      about.title = title || about.title;
+      about.subtitle = subtitle || about.subtitle;
+      about.description = description || about.description;
+      await about.save();
     }
-  }
-}
 
-module.exports = new AboutController();
+    logger.success('About section updated');
+
+    res.status(200).json({
+      success: true,
+      message: 'About section updated successfully',
+      data: about
+    });
+  } catch (error) {
+    logger.error('Update about error:', error);
+    next(error);
+  }
+};
+
+module.exports = {
+  getAbout,
+  updateAbout
+};

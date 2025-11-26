@@ -11,5 +11,5 @@ module.exports = {
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000',
   adminEmail: process.env.ADMIN_EMAIL || 'admin@rappoo.com',
   adminPassword: process.env.ADMIN_PASSWORD || 'Admin@123',
-  adminName: process.env.ADMIN_Name||"Reppo Admin 1"
+  adminName: process.env.ADMIN_NAME||"Reppo Admin 1"
 };

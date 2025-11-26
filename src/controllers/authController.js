@@ -1,53 +1,90 @@
-const authService = require('../services/authService');
+const Admin = require('../models/Admin');
+const { generateToken } = require('../utils/jwt');
 const logger = require('../utils/logger');
 
-class AuthController {
-  async login(req, res, next) {
-    try {
-      const { email, password } = req.body;
+// Login
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
 
-      // Validate input
-      if (!email || !password) {
-        return res.status(400).json({
-          success: false,
-          message: 'Please provide email and password'
-        });
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide email and password'
+      });
+    }
+
+    // Find admin by email (include password field)
+    const admin = await Admin.findOne({ email }).select('+password');
+
+    if (!admin) {
+      logger.error('Admin not found:', email);
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
+    }
+
+    // Check password
+    const isPasswordValid = await admin.comparePassword(password);
+
+    if (!isPasswordValid) {
+      logger.error('Invalid password for:', email);
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
+    }
+
+    // Generate token with user ID as string
+    const token = generateToken(admin._id.toString());
+
+    // Remove password from response
+    const adminData = {
+      _id: admin._id,
+      email: admin.email,
+      name: admin.name
+    };
+
+    logger.success(`Admin logged in: ${email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      data: {
+        token,
+        user: adminData
       }
-
-      const result = await authService.login(email, password);
-
-      logger.success(`Admin logged in: ${email}`);
-
-      res.status(200).json({
-        success: true,
-        message: 'Login successful',
-        data: result
-      });
-    } catch (error) {
-      logger.error('Login error:', error);
-      res.status(401).json({
-        success: false,
-        message: error.message || 'Login failed'
-      });
-    }
+    });
+  } catch (error) {
+    logger.error('Login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Login failed'
+    });
   }
+};
 
-  async verifyToken(req, res) {
-    try {
-      res.status(200).json({
-        success: true,
-        message: 'Token is valid',
-        data: {
-          user: req.user
-        }
-      });
-    } catch (error) {
-      res.status(401).json({
-        success: false,
-        message: 'Token verification failed'
-      });
-    }
+// Verify Token
+const verifyToken = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      message: 'Token is valid',
+      data: {
+        user: req.user
+      }
+    });
+  } catch (error) {
+    res.status(401).json({
+      success: false,
+      message: 'Token verification failed'
+    });
   }
-}
+};
 
-module.exports = new AuthController();
+module.exports = {
+  login,
+  verifyToken
+};

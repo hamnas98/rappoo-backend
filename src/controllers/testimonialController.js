@@ -1,97 +1,134 @@
-const testimonialService = require('../services/testimonialService');
+const Testimonial = require('../models/Testimonial');
 const logger = require('../utils/logger');
 
-class TestimonialController {
-  async getAllTestimonials(req, res, next) {
-    try {
-      const testimonials = await testimonialService.getAllTestimonials();
-
-      res.status(200).json({
-        success: true,
-        count: testimonials.length,
-        data: testimonials
-      });
-    } catch (error) {
-      logger.error('Get testimonials error:', error);
-      next(error);
+// Get All Testimonials
+const getAllTestimonials = async (req, res, next) => {
+  try {
+    const testimonials = await Testimonial.find({ isActive: true }).sort({ order: 1, createdAt: -1 });
+    if(!testimonials) {
+      logger.warn('no testimonial data')
     }
+    console.log('testimonial data :',testimonials)
+    res.status(200).json({
+      success: true,
+      count: testimonials.length,
+      data: testimonials
+    });
+  } catch (error) {
+    logger.error('Get testimonials error:', error);
+    next(error);
   }
+};
 
-  async getTestimonialById(req, res, next) {
-    try {
-      const testimonial = await testimonialService.getTestimonialById(req.params.id);
+// Get Testimonial By ID
+const getTestimonialById = async (req, res, next) => {
+  try {
+    const testimonial = await Testimonial.findById(req.params.id);
 
-      res.status(200).json({
-        success: true,
-        data: testimonial
-      });
-    } catch (error) {
-      logger.error('Get testimonial error:', error);
-      res.status(404).json({
+    if (!testimonial) {
+      return res.status(404).json({
         success: false,
-        message: error.message
+        message: 'Testimonial not found'
       });
     }
+
+    res.status(200).json({
+      success: true,
+      data: testimonial
+    });
+  } catch (error) {
+    logger.error('Get testimonial error:', error);
+    res.status(404).json({
+      success: false,
+      message: 'Testimonial not found'
+    });
   }
+};
 
-  async createTestimonial(req, res, next) {
-    try {
-      const testimonial = await testimonialService.createTestimonial(req.body);
+// Create Testimonial
+const createTestimonial = async (req, res, next) => {
+  try {
+    const testimonial = await Testimonial.create(req.body);
 
-      logger.success('Testimonial created');
+    logger.success('Testimonial created');
 
-      res.status(201).json({
-        success: true,
-        message: 'Testimonial created successfully',
-        data: testimonial
-      });
-    } catch (error) {
-      logger.error('Create testimonial error:', error);
-      next(error);
-    }
+    res.status(201).json({
+      success: true,
+      message: 'Testimonial created successfully',
+      data: testimonial
+    });
+  } catch (error) {
+    logger.error('Create testimonial error:', error);
+    next(error);
   }
+};
 
-  async updateTestimonial(req, res, next) {
-    try {
-      const testimonial = await testimonialService.updateTestimonial(
-        req.params.id,
-        req.body
-      );
+// Update Testimonial
+const updateTestimonial = async (req, res, next) => {
+  try {
+    const testimonial = await Testimonial.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true
+      }
+    );
 
-      logger.success('Testimonial updated');
-
-      res.status(200).json({
-        success: true,
-        message: 'Testimonial updated successfully',
-        data: testimonial
-      });
-    } catch (error) {
-      logger.error('Update testimonial error:', error);
-      res.status(404).json({
+    if (!testimonial) {
+      return res.status(404).json({
         success: false,
-        message: error.message
+        message: 'Testimonial not found'
       });
     }
+
+    logger.success('Testimonial updated');
+
+    res.status(200).json({
+      success: true,
+      message: 'Testimonial updated successfully',
+      data: testimonial
+    });
+  } catch (error) {
+    logger.error('Update testimonial error:', error);
+    res.status(404).json({
+      success: false,
+      message: error.message
+    });
   }
+};
 
-  async deleteTestimonial(req, res, next) {
-    try {
-      await testimonialService.deleteTestimonial(req.params.id);
+// Delete Testimonial
+const deleteTestimonial = async (req, res, next) => {
+  try {
+    const testimonial = await Testimonial.findByIdAndDelete(req.params.id);
 
-      logger.success('Testimonial deleted');
-
-      res.status(200).json({
-        success: true,
-        message: 'Testimonial deleted successfully'
-      });
-    } catch (error) {
-      logger.error('Delete testimonial error:', error);
-      res.status(404).json({
+    if (!testimonial) {
+      return res.status(404).json({
         success: false,
-        message: error.message
+        message: 'Testimonial not found'
       });
     }
-  }
-}
 
-module.exports = new TestimonialController();
+    logger.success('Testimonial deleted');
+
+    res.status(200).json({
+      success: true,
+      message: 'Testimonial deleted successfully'
+    });
+  } catch (error) {
+    logger.error('Delete testimonial error:', error);
+    res.status(404).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+module.exports = {
+  getAllTestimonials,
+  getTestimonialById,
+  createTestimonial,
+  updateTestimonial,
+  deleteTestimonial
+};

@@ -1,15 +1,32 @@
 const jwt = require('jsonwebtoken');
-const { jwtSecret, jwtExpire } = require('../config/env');
+const env = require('../config/env');
 
-const generateToken = (payload) => {
-  return jwt.sign(payload, jwtSecret, { expiresIn: jwtExpire });
+const generateToken = (userId) => {
+  const secret = env.jwtSecret;  // Changed from JWT_SECRET to jwtSecret
+  const expire = env.jwtExpire;  // Changed from JWT_EXPIRE to jwtExpire
+
+  if (!secret) {
+    throw new Error('JWT_SECRET is not defined in environment variables');
+  }
+
+  return jwt.sign(
+    { id: userId },
+    secret,
+    { expiresIn: expire }
+  );
 };
 
 const verifyToken = (token) => {
   try {
-    return jwt.verify(token, jwtSecret);
+    const secret = env.jwtSecret;  // Changed from JWT_SECRET to jwtSecret
+    
+    if (!secret) {
+      throw new Error('JWT_SECRET is not defined');
+    }
+
+    return jwt.verify(token, secret);
   } catch (error) {
-    return null;
+    throw new Error('Invalid token');
   }
 };
 
