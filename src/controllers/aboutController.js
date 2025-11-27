@@ -1,12 +1,12 @@
 const About = require('../models/About');
 const logger = require('../utils/logger');
 
-// Get About
+// get 
 const getAbout = async (req, res, next) => {
   try {
     let about = await About.findOne();
     
-    // If no about exists, create one with default values
+    
     if (!about) {
      
       logger.info('No About Data');
@@ -24,7 +24,7 @@ const getAbout = async (req, res, next) => {
   }
 };
 
-// Update About
+// update count
 const updateAbout = async (req, res, next) => {
   try {
     const { title, subtitle, description } = req.body;
@@ -32,10 +32,10 @@ const updateAbout = async (req, res, next) => {
     let about = await About.findOne();
 
     if (!about) {
-      // Create new if doesn't exist
+      // creating
       about = await About.create(req.body);
     } else {
-      // Update existing
+
       about.title = title || about.title;
       about.subtitle = subtitle || about.subtitle;
       about.description = description || about.description;

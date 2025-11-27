@@ -3,10 +3,10 @@ const router = express.Router();
 const { getHero, updateHero } = require('../controllers/heroController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-// Public route
+// public
 router.get('/', getHero);
 
-// Protected route
+// protected (admin)
 router.put('/', authMiddleware, updateHero);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const FAQ = require('../models/FAQ');
 const logger = require('../utils/logger');
 
-// Get All FAQs
+// get 
 const getAllFAQs = async (req, res, next) => {
   try {
     const faqs = await FAQ.find({ isActive: true }).sort({ order: 1, createdAt: -1 });
@@ -22,7 +22,7 @@ const getAllFAQs = async (req, res, next) => {
   }
 };
 
-// Get FAQ By ID
+// get by id
 const getFAQById = async (req, res, next) => {
   try {
     const faq = await FAQ.findById(req.params.id);
@@ -48,7 +48,7 @@ const getFAQById = async (req, res, next) => {
   }
 };
 
-// Create FAQ
+// create
 const createFAQ = async (req, res, next) => {
   try {
     const faq = await FAQ.create(req.body);
@@ -66,7 +66,7 @@ const createFAQ = async (req, res, next) => {
   }
 };
 
-// Update FAQ
+// update
 const updateFAQ = async (req, res, next) => {
   try {
     const faq = await FAQ.findByIdAndUpdate(
@@ -101,7 +101,7 @@ const updateFAQ = async (req, res, next) => {
   }
 };
 
-// Delete FAQ
+// delete
 const deleteFAQ = async (req, res, next) => {
   try {
     const faq = await FAQ.findByIdAndDelete(req.params.id);

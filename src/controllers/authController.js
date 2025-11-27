@@ -2,12 +2,12 @@ const Admin = require('../models/Admin');
 const { generateToken } = require('../utils/jwt');
 const logger = require('../utils/logger');
 
-// Login
+// login
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
+    // input validation
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -15,7 +15,7 @@ const login = async (req, res, next) => {
       });
     }
 
-    // Find admin by email (include password field)
+    // find admi 
     const admin = await Admin.findOne({ email }).select('+password');
 
     if (!admin) {
@@ -26,7 +26,7 @@ const login = async (req, res, next) => {
       });
     }
 
-    // Check password
+    // check password
     const isPasswordValid = await admin.comparePassword(password);
 
     if (!isPasswordValid) {
@@ -37,10 +37,10 @@ const login = async (req, res, next) => {
       });
     }
 
-    // Generate token with user ID as string
+    // genereate token
     const token = generateToken(admin._id.toString());
 
-    // Remove password from response
+    // response
     const adminData = {
       _id: admin._id,
       email: admin.email,

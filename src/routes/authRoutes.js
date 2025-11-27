@@ -3,10 +3,10 @@ const router = express.Router();
 const { login, verifyToken } = require('../controllers/authController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-// Public route
+// public 
 router.post('/login', login);
 
-// Protected route
+// protected (admin)
 router.get('/verify', authMiddleware, verifyToken);
 
 module.exports = router;

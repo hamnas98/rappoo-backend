@@ -4,7 +4,7 @@ const errorHandler = require('./middlewares/errorHandler');
 const { frontendUrl } = require('./config/env');
 const logger = require('./utils/logger');
 
-// Import routes
+// import routes
 const authRoutes = require('./routes/authRoutes');
 const heroRoutes = require('./routes/heroRoutes');
 const aboutRoutes = require('./routes/aboutRoutes');
@@ -13,7 +13,7 @@ const faqRoutes = require('./routes/faqRoutes');
 
 const app = express();
 
-// Middleware
+// middleware
 app.use(cors({
   origin: frontendUrl,
   credentials: true
@@ -22,7 +22,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Request logger
+// request logger
 app.use((req, res, next) => {
   logger.info(`${req.method} ${req.path}`);
   next();
@@ -31,14 +31,14 @@ app.use((req, res, next) => {
 
 
 
-// API Routes
+// api- routes
 app.use('/api/auth', authRoutes);
 app.use('/api/content/hero', heroRoutes);
 app.use('/api/content/about', aboutRoutes);
 app.use('/api/content/testimonials', testimonialRoutes);
 app.use('/api/content/faq', faqRoutes);
 
-// 404 handler
+// error 404
 app.use((req, res) => {
   res.status(404).json({
     success: false,

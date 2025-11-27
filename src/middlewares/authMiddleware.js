@@ -2,7 +2,7 @@ const { verifyToken } = require('../utils/jwt');
 
 const authMiddleware = (req, res, next) => {
   try {
-    // Get token from header
+    // get token (from headear)
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -14,7 +14,7 @@ const authMiddleware = (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
     
-    // Verify token
+    // verufy
     const decoded = verifyToken(token);
     
     if (!decoded) {
@@ -24,7 +24,7 @@ const authMiddleware = (req, res, next) => {
       });
     }
 
-    // Attach user to request
+    // attach to user request 
     req.user = decoded;
     next();
   } catch (error) {

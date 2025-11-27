@@ -1,12 +1,11 @@
 const Hero = require('../models/Hero');
 const logger = require('../utils/logger');
 
-// Get Hero
+// get
 const getHero = async (req, res, next) => {
   try {
     let hero = await Hero.findOne();
     
-    // If no hero exists
     if (!hero) {
       
       logger.info('No hero Data');
@@ -24,7 +23,7 @@ const getHero = async (req, res, next) => {
   }
 };
 
-// Update Hero
+  //update
 const updateHero = async (req, res, next) => {
   try {
     const { title, subtitle, happyUsersCount } = req.body;
@@ -32,10 +31,10 @@ const updateHero = async (req, res, next) => {
     let hero = await Hero.findOne();
 
     if (!hero) {
-      // Create new if doesn't exist
+
       hero = await Hero.create(req.body);
     } else {
-      // Update existing
+
       hero.title = title || hero.title;
       hero.subtitle = subtitle || hero.subtitle;
       hero.happyUsersCount = happyUsersCount || hero.happyUsersCount;

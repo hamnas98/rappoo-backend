@@ -13,7 +13,7 @@ const seedContent = async () => {
   try {
     await connectDB();
 
-    console.log('\n🌱 Starting seed process...\n');
+    console.log('\n Starting seed process...\n');
 
     // Seed Hero
     await Hero.deleteMany({});
@@ -102,7 +102,7 @@ const seedContent = async () => {
     logger.success('✅ All content seeded successfully');
     
     // Verify data
-    console.log('\n📊 Verification:');
+    console.log('\n Verification:');
     console.log('Heroes:', await Hero.countDocuments());
     console.log('Abouts:', await About.countDocuments());
     console.log('Testimonials:', await Testimonial.countDocuments());

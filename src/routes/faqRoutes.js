@@ -9,11 +9,11 @@ const {
 } = require('../controllers/faqController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-// Public routes
+// public
 router.get('/', getAllFAQs);
 router.get('/:id', getFAQById);
 
-// Protected routes
+// protected (admin)
 router.post('/', authMiddleware, createFAQ);
 router.put('/:id', authMiddleware, updateFAQ);
 router.delete('/:id', authMiddleware, deleteFAQ);

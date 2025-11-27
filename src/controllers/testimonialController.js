@@ -1,7 +1,7 @@
 const Testimonial = require('../models/Testimonial');
 const logger = require('../utils/logger');
 
-// Get All Testimonials
+// get
 const getAllTestimonials = async (req, res, next) => {
   try {
     const testimonials = await Testimonial.find({ isActive: true }).sort({ order: 1, createdAt: -1 });
@@ -20,7 +20,7 @@ const getAllTestimonials = async (req, res, next) => {
   }
 };
 
-// Get Testimonial By ID
+// get by id
 const getTestimonialById = async (req, res, next) => {
   try {
     const testimonial = await Testimonial.findById(req.params.id);
@@ -45,7 +45,7 @@ const getTestimonialById = async (req, res, next) => {
   }
 };
 
-// Create Testimonial
+// create
 const createTestimonial = async (req, res, next) => {
   try {
     const testimonial = await Testimonial.create(req.body);
@@ -63,7 +63,7 @@ const createTestimonial = async (req, res, next) => {
   }
 };
 
-// Update Testimonial
+// update
 const updateTestimonial = async (req, res, next) => {
   try {
     const testimonial = await Testimonial.findByIdAndUpdate(
@@ -98,7 +98,7 @@ const updateTestimonial = async (req, res, next) => {
   }
 };
 
-// Delete Testimonial
+// delete
 const deleteTestimonial = async (req, res, next) => {
   try {
     const testimonial = await Testimonial.findByIdAndDelete(req.params.id);
