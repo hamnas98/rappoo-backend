@@ -5,6 +5,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 router.get('/', getAbout);
 
+// protected - admin 
 router.put('/', authMiddleware, updateAbout);
 
 module.exports = router;

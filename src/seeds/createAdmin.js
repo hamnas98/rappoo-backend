@@ -10,7 +10,7 @@ const createAdmin = async () => {
   try {
     await connectDB();
 
-    // check if admin already exists
+
     const existingAdmin = await Admin.findOne({ email: process.env.ADMIN_EMAIL });
 
     if (existingAdmin) {

@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const errorHandler = require('./middlewares/errorHandler');
 const { frontendUrl } = require('./config/env');
 const logger = require('./utils/logger');
@@ -16,9 +17,10 @@ const app = express();
 // middleware
 app.use(cors({
   origin: frontendUrl,
-  credentials: true
+  credentials: true  
 }));
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -28,10 +30,7 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
-
-// api- routes
+// api routes
 app.use('/api/auth', authRoutes);
 app.use('/api/content/hero', heroRoutes);
 app.use('/api/content/about', aboutRoutes);
@@ -45,7 +44,6 @@ app.use((req, res) => {
     message: 'Route not found'
   });
 });
-
 
 app.use(errorHandler);
 

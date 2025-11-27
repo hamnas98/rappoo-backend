@@ -1,36 +1,61 @@
-const { verifyToken } = require('../utils/jwt');
+const { verifyAccessToken } = require('../utils/jwt');
+const Admin = require('../models/Admin');
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   try {
-    // get token (from headear)
+    // get token from header
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
-        message: 'No token provided. Access denied.'
+        message: 'No access token provided'
       });
     }
 
-    const token = authHeader.split(' ')[1];
+    const accessToken = authHeader.split(' ')[1];
     
-    // verufy
-    const decoded = verifyToken(token);
+    // verify access token
+    const decoded = verifyAccessToken(accessToken);
     
     if (!decoded) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid or expired token. Access denied.'
+        message: 'Invalid access token'
       });
     }
 
-    // attach to user request 
-    req.user = decoded;
+      
+    const admin = await Admin.findById(decoded.id).select('-password');
+    
+    if (!admin) {
+      return res.status(401).json({
+        success: false,
+        message: 'Admin not found'
+      });
+    }
+
+
+    req.user = {
+      id: admin._id.toString(),
+      email: admin.email,
+      name: admin.name
+    };
+    
     next();
   } catch (error) {
+   
+    if (error.message.includes('expired')) {
+      return res.status(401).json({
+        success: false,
+        message: 'Access token expired',
+        code: 'TOKEN_EXPIRED'
+      });
+    }
+    
     return res.status(401).json({
       success: false,
-      message: 'Authentication failed.'
+      message: 'Authentication failed'
     });
   }
 };
