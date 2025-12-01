@@ -134,7 +134,8 @@ MONGODB_URI=mongodb+srv://hamnascp98_db_user:reppoo4913@cluster0.sblit7a.mongodb
 JWT_SECRET=6637f3d6848a722809ed4516b7c74f7b530433eece6a7f0565c03972e81e6cdaee8be2df0018ae26e1afb0d2e97131084f92b410c518bc851ebc0060f09bb6a3
 JWT_EXPIRE=24h
 
-# frontend URL 
+# frontend URL
+local host
 FRONTEND_URL=http://localhost:3000
 
 # Admin Credentials for adding 
